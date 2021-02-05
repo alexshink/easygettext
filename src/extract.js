@@ -8,6 +8,12 @@ const jsExtractor = require('./javascript-extract.js');
 const tsExtractor = require('./typescript-extract.js');
 const flowRemoveTypes = require('flow-remove-types');
 
+const cheerioXmlModeParam = process.argv.indexOf("--xmlMode");
+let cheerioXmlMode = false;
+if (cheerioXmlModeParam > -1) {
+  cheerioXmlMode = true;
+}
+
 // Internal regular expression used to escape special characters
 const ESCAPE_REGEX = /[\-\[\]\/{}()*+?.\\^$|]/g;
 
@@ -95,7 +101,7 @@ function preprocessTemplate(data, type = 'html') {
       }).trim();
     } else if (type === 'vue') {
       const $ = cheerio.load(data, {
-        xmlMode: true,
+        xmlMode: cheerioXmlMode,
         decodeEntities: false,
         withStartIndices: true,
       });
@@ -575,7 +581,7 @@ exports.Extractor = class Extractor {
 
     const strings = content.map(c => {
       const $ = cheerio.load(c, {
-        xmlMode: true,
+        xmlMode: cheerioXmlMode,
         decodeEntities: false,
         withStartIndices: true,
       });
